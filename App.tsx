@@ -86,7 +86,6 @@ export default function App() {
     try {
       const message = await AsyncStorage.getItem('@message');
       if (message) {
-        console.log("store", message);
         setMessage(message);
         return message;
       } else {
