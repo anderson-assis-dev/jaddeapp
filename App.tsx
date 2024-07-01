@@ -42,7 +42,7 @@ export default function App() {
 
     const interval = setInterval(() => {
       fetchAndScheduleNotification();
-    }, 20000); //30000
+    }, 300000); //30000
     return () => {
       notificationListener.current &&
         Notifications.removeNotificationSubscription(notificationListener.current);
