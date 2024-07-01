@@ -12,16 +12,44 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "com.jaddeia.jaddeia",
+      "supportsTablet": true,
+      "allowNotifications": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses the location to show relevant content.",
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "UIBackgroundModes": ["fetch", "remote-notification"]
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "notification": {
+        "icon": "./assets/icon.png",
+        "color": "#ffffff"
+      },
+      "useNextNotificationsApi": true,
+      "permissions": [
+        "NOTIFICATIONS"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/icon.png"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "default"
+        }
+      ]
+    ]
   }
 }
