@@ -17,8 +17,8 @@ Notifications.setNotificationHandler({
 
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [user, setUser] = useState<User | null>(null);
-    const [message, setMessage] = useState<null | undefined>(null);
+  const [user, setUser] = useState<string | undefined>(undefined);
+    const [message, setMessage] = useState<null | undefined | string>(null);
   const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(
     undefined
@@ -41,12 +41,8 @@ export default function App() {
     });
 
     const interval = setInterval(() => {
-      if(user){
-        fetchAndScheduleNotification();
-      }
-     
-    
-    }, 3000); //30000
+      fetchAndScheduleNotification();
+    }, 20000); //30000
     return () => {
       notificationListener.current &&
         Notifications.removeNotificationSubscription(notificationListener.current);
@@ -57,27 +53,51 @@ export default function App() {
   }, []);
   const fetchAndScheduleNotification = async () => {
     try {
-      const data_user: any = await AsyncStorage.getItem('@user');
-      setUser(data_user)
-      if(user){
-        const response = await fetch(`https://api.jadde.com.br/api/notifications-token/${user?.id}`);
+      const user_id: any = await userId();
+      const text_message: any = await textMessage();
+      if(user || user_id){
+        const response = await fetch(`https://api.jadde.com.br/api/notifications-token/${user || user_id}`);
         const data = await response.json();
-      
-        console.log("data", data?.text)
-        console.log("message", message)
-        if(data?.text && data?.text !== message){
-          console.log("data22", data)
-          console.log("message222", message)
-          setMessage(data?.text)
-          await schedulePushNotification();
+        if((data?.text && data?.text !== text_message) || text_message == null){
+          AsyncStorage.setItem('@message', data?.text);
+          await schedulePushNotification(data?.text);
         }
       }  
    
     } catch (error) {
-      console.error("Erro ao consumir a API: ", error);
+      console.log("Erro ao consumir a API: ", error);
     }
   };
-  async function schedulePushNotification() {
+  async function userId() {
+    try {
+      const id = await AsyncStorage.getItem('@user');
+      if (id) {
+        setUser(id);
+        return id;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao recuperar ID do usuário:', error);
+      return null; // Em caso de erro, retorna null
+    }
+  }
+  async function textMessage() {
+    try {
+      const message = await AsyncStorage.getItem('@message');
+      if (message) {
+        console.log("store", message);
+        setMessage(message);
+        return message;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao recuperar textMessage:', error);
+      return null; // Em caso de erro, retorna null
+    }
+  }
+  async function schedulePushNotification(message: string) {
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "Agendamento realizado",
@@ -88,19 +108,17 @@ export default function App() {
     });
   }
   async function handleMessage(event: any) {
-
     const messageData = JSON.parse(event.nativeEvent.data);
-  
     switch (messageData.type) {
   
       case 'loginSuccess':
-          setUser(messageData.data);
-          AsyncStorage.setItem('@user', messageData.data);
-          console.log('Login success:', messageData.data);
+        const user_id: string = messageData?.data?.id.toString();
+          AsyncStorage.setItem('@user', user_id);
         break;
       case 'logoutSuccess':
-          setUser(null);
-          console.log(user)
+          AsyncStorage.setItem('@user',"");
+          setUser(undefined)
+
         break; 
   
       case 'scheduleStore':
