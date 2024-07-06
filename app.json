@@ -1,55 +1,82 @@
 {
   "expo": {
-    "name": "jaddeapp",
+    "name": "Jadde",
     "slug": "jaddeapp",
-    "version": "1.0.0",
+    "version": "10.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#333733"
     },
     "ios": {
       "bundleIdentifier": "com.jaddeia.jaddeia",
       "supportsTablet": true,
       "allowNotifications": true,
+      "buildNumber": "10",
+      "icon": "./assets/152x152.png",
+      "icon120": "./assets/120x120.png",
+      "icon167": "./assets/167x167.png",
       "config": {
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "This app uses the location to show relevant content.",
         "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
-        "UIBackgroundModes": ["fetch", "remote-notification"]
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ]
       }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#333733"
       },
       "notification": {
         "icon": "./assets/icon.png",
-        "color": "#ffffff"
+        "color": "#333733"
       },
+      "versionCode": 10,
       "useNextNotificationsApi": true,
       "permissions": [
         "NOTIFICATIONS"
-      ]
+      ],
+      "package": "com.jaddeia.jaddeia"
     },
     "web": {
       "favicon": "./assets/icon.png"
+    },
+    "notification": {
+      "icon": "./assets/icon.png",
+      "color": "#333733"
     },
     "plugins": [
       [
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
-          "color": "#ffffff",
-          "defaultChannel": "default"
+          "color": "#333733",
+          "defaultChannel": "default",
+          "sounds": ["./assets/notification_sound.wav"],
+          "ios": {
+            "sound": true,
+            "vibration": true
+          },
+          "android": {
+            "sound": true,
+            "vibrationPattern": [0, 500, 200, 500]
+          }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "9caecc29-43ea-4244-b67a-8127131a84f2"
+      }
+    }
   }
 }

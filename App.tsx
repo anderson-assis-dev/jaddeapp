@@ -4,8 +4,9 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import WebView from 'react-native-webview';
-import { User } from './User.interface';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
+import { textMessage, userId } from './AsyncStorage';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -30,19 +31,19 @@ export default function App() {
     registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
 
     if (Platform.OS === 'android') {
-      Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
+      Notifications.getNotificationChannelsAsync().then((value: any) => setChannels(value ?? []));
     }
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+    notificationListener.current = Notifications.addNotificationReceivedListener((notification: any) => {
       setNotification(notification);
     });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log("aqui");
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response: any) => {
+      console.log("aqui", response);
     });
 
     const interval = setInterval(() => {
       fetchAndScheduleNotification();
-    }, 300000); //30000
+    }, 10000); //30000
     return () => {
       notificationListener.current &&
         Notifications.removeNotificationSubscription(notificationListener.current);
@@ -58,6 +59,7 @@ export default function App() {
       if(user || user_id){
         const response = await fetch(`https://api.jadde.com.br/api/notifications-token/${user || user_id}`);
         const data = await response.json();
+     
         if((data?.text && data?.text !== text_message) || text_message == null){
           AsyncStorage.setItem('@message', data?.text);
           await schedulePushNotification(data?.text);
@@ -68,34 +70,6 @@ export default function App() {
       console.log("Erro ao consumir a API: ", error);
     }
   };
-  async function userId() {
-    try {
-      const id = await AsyncStorage.getItem('@user');
-      if (id) {
-        setUser(id);
-        return id;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error('Erro ao recuperar ID do usuário:', error);
-      return null; // Em caso de erro, retorna null
-    }
-  }
-  async function textMessage() {
-    try {
-      const message = await AsyncStorage.getItem('@message');
-      if (message) {
-        setMessage(message);
-        return message;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error('Erro ao recuperar textMessage:', error);
-      return null; // Em caso de erro, retorna null
-    }
-  }
   async function schedulePushNotification(message: string) {
     await Notifications.scheduleNotificationAsync({
       content: {
