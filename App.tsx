@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
-import {  Platform } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import WebView from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React from 'react';
 import { textMessage, userId } from './AsyncStorage';
+import { registerBackgroundFetchAsync, unregisterBackgroundFetchAsync, getTextNotification } from './backgroundFetch';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -19,7 +19,7 @@ Notifications.setNotificationHandler({
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState('');
   const [user, setUser] = useState<string | undefined>(undefined);
-    const [message, setMessage] = useState<null | undefined | string>(null);
+  const [message, setMessage] = useState<null | undefined | string>(null);
   const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(
     undefined
@@ -41,76 +41,47 @@ export default function App() {
       console.log("aqui", response);
     });
 
+    registerBackgroundFetchAsync();
     const interval = setInterval(() => {
-      fetchAndScheduleNotification();
-    }, 10000); //30000
+      getTextNotification();
+    }, 5 * 60 * 1000);
     return () => {
       notificationListener.current &&
         Notifications.removeNotificationSubscription(notificationListener.current);
       responseListener.current &&
         Notifications.removeNotificationSubscription(responseListener.current);
+      unregisterBackgroundFetchAsync();
       clearInterval(interval);
     };
   }, []);
-  const fetchAndScheduleNotification = async () => {
-    try {
-      const user_id: any = await userId();
-      const text_message: any = await textMessage();
-      if(user || user_id){
-        const response = await fetch(`https://api.jadde.com.br/api/notifications-token/${user || user_id}`);
-        const data = await response.json();
-     
-        if((data?.text && data?.text !== text_message) || text_message == null){
-          AsyncStorage.setItem('@message', data?.text);
-          await schedulePushNotification(data?.text);
-        }
-      }  
-   
-    } catch (error) {
-      console.log("Erro ao consumir a API: ", error);
-    }
-  };
-  async function schedulePushNotification(message: string) {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Agendamento realizado",
-        body: message,
-        data: { data: 'goes here', test: { test1: 'more data' } },
-      },
-      trigger: { seconds: 1 },
-    });
-  }
+
   async function handleMessage(event: any) {
     const messageData = JSON.parse(event.nativeEvent.data);
     switch (messageData.type) {
-  
       case 'loginSuccess':
         const user_id: string = messageData?.data?.id.toString();
-          AsyncStorage.setItem('@user', user_id);
+        AsyncStorage.setItem('@user', user_id);
         break;
       case 'logoutSuccess':
-          AsyncStorage.setItem('@user',"");
-          setUser(undefined)
-
-        break; 
-  
+        AsyncStorage.setItem('@user', "");
+        setUser(undefined);
+        break;
       case 'scheduleStore':
-          console.log('Schedule store success:', messageData.data);
-        break; 
+        console.log('Schedule store success:', messageData.data);
+        break;
       default:
         break;
     }
   }
+
   return (
     <WebView
-      source={{ uri: 'https://chat.jadde.com.br/' }}
+      source={{ uri: 'https://app.jadde.com.br/' }}
       style={{ flex: 1 }}
       onMessage={handleMessage}
     />
   );
 }
-
-
 
 async function registerForPushNotificationsAsync() {
   let token;
