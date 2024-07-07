@@ -42,21 +42,19 @@ export default function App() {
     });
 
     registerBackgroundFetchAsync();
-    const interval = setInterval(() => {
-      getTextNotification();
-    }, 5 * 60 * 1000);
+
     return () => {
       notificationListener.current &&
         Notifications.removeNotificationSubscription(notificationListener.current);
       responseListener.current &&
         Notifications.removeNotificationSubscription(responseListener.current);
       unregisterBackgroundFetchAsync();
-      clearInterval(interval);
     };
   }, []);
 
   async function handleMessage(event: any) {
     const messageData = JSON.parse(event.nativeEvent.data);
+    console.log("event", messageData.type)
     switch (messageData.type) {
       case 'loginSuccess':
         const user_id: string = messageData?.data?.id.toString();
@@ -67,7 +65,23 @@ export default function App() {
         setUser(undefined);
         break;
       case 'scheduleStore':
-        console.log('Schedule store success:', messageData.data);
+        const regex = /(\d+)\s+(\d+)$/;
+        const match = messageData.data.match(regex);
+        const admin_id = match[1];
+        const colaborator = match[2];
+        const newText = messageData.data.replace(regex, '').trim();
+        const logado_id = await AsyncStorage.getItem('@user');
+        if(logado_id == colaborator || logado_id == admin_id){
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: 'Agendamento realizado',
+              body: newText,
+              data: { data: 'goes here', test: { test1: 'more data' } },
+            },
+            trigger: { seconds: 1 },
+          });
+        }
+    
         break;
       default:
         break;
