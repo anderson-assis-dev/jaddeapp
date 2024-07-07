@@ -2,7 +2,7 @@
   "expo": {
     "name": "Jadde",
     "slug": "jaddeapp",
-    "version": "10.0.0",
+    "version": "10.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,7 +15,7 @@
       "bundleIdentifier": "com.jaddeia.jaddeia",
       "supportsTablet": true,
       "allowNotifications": true,
-      "buildNumber": "10",
+      "buildNumber": "11",
       "icon": "./assets/152x152.png",
       "icon120": "./assets/120x120.png",
       "icon167": "./assets/167x167.png",
@@ -40,7 +40,7 @@
         "icon": "./assets/icon.png",
         "color": "#333733"
       },
-      "versionCode": 10,
+      "versionCode": 11,
       "useNextNotificationsApi": true,
       "permissions": [
         "NOTIFICATIONS"
