@@ -72,6 +72,7 @@ export default function App() {
         const newText = messageData.data.replace(regex, '').trim();
         const logado_id = await AsyncStorage.getItem('@user');
         if(logado_id == colaborator || logado_id == admin_id){
+          await AsyncStorage.setItem('@message', newText);
           await Notifications.scheduleNotificationAsync({
             content: {
               title: 'Agendamento realizado',
