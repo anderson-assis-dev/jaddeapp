@@ -28,7 +28,7 @@ export async function getTextNotification(){
     }
 }
 
-async function schedulePushNotification(message) {
+async function schedulePushNotification(message: string) {
   await Notifications.scheduleNotificationAsync({
     content: {
       title: 'Agendamento realizado',
