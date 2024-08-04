@@ -2,7 +2,7 @@
   "expo": {
     "name": "Jadde IA",
     "slug": "jaddeapp",
-    "version": "10.0.3",
+    "version": "2.0.17",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,24 +12,13 @@
       "backgroundColor": "#333733"
     },
     "ios": {
-      "bundleIdentifier": "com.jaddeia.jaddeia",
+      "bundleIdentifier": "com.agendos",
       "supportsTablet": true,
       "allowNotifications": true,
-      "buildNumber": "13",
+      "buildNumber": "17",
       "icon": "./assets/152x152.png",
       "icon120": "./assets/120x120.png",
-      "icon167": "./assets/167x167.png",
-      "config": {
-        "usesNonExemptEncryption": false
-      },
-      "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app uses the location to show relevant content.",
-        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
-        "UIBackgroundModes": [
-          "fetch",
-          "remote-notification"
-        ]
-      }
+      "icon167": "./assets/167x167.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -40,12 +29,12 @@
         "icon": "./assets/icon.png",
         "color": "#333733"
       },
-      "versionCode": 13,
+      "versionCode": 17,
       "useNextNotificationsApi": true,
       "permissions": [
         "NOTIFICATIONS"
       ],
-      "package": "com.jaddeia.jaddeia"
+      "package": "com.agendos"
     },
     "web": {
       "favicon": "./assets/icon.png"
